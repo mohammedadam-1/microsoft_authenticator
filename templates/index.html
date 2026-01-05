@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Web App</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <h2>Hey {{ user.get('name') }}!</h2>
+   
+    <img src="https://github.com/Azure-Samples/ms-identity-python-webapp-django/raw/main/static/topology.png" alt="Topology">
+
+    <ul>
+        {% if api_endpoint %}
+            <li><a href="/call_api">Call API</a></li>
+        {% endif %}
+        <li><a href="/mails">View Emails</a></li>
+        <li><a href="/debug_token">Debug Token</a></li>
+        <li><a href="{{ url_for('identity.logout') }}">Logout</a></li>
+    </ul>
+
+    <hr>    
+    <footer style="text-align: left">{{ title }}</footer>
+</body>
+</html> 

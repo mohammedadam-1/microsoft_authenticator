@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Emails</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .email-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .email-subject {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        .email-from {
+            color: #666;
+        }
+        .email-date {
+            color: #999;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input[type="date"] {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        input[type="submit"] {
+            background: #0066cc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #0052a3;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <h2>Hello, {{ user.get('name') }}!</h2>
+    
+    <a href="/">← Back to Home</a> | <a href="/logout">Logout</a>
+    
+    <hr>
+    
+    <h3>Select Date Range</h3>
+    <form action="{{ url_for('view_emails') }}" method="post">
+        <label for="start_date">Start Date:</label><br>
+        <input type="date" id="start_date" name="start_date" required><br><br>
+        
+        <label for="end_date">End Date:</label><br>
+        <input type="date" id="end_date" name="end_date" required><br><br>
+        
+        <input type="submit" value="Fetch Emails">
+    </form>
+
+    {% if result %}
+        <hr>
+        <h3>Results:</h3>
+        
+        {% if result.error %}
+            <div style="background: #ffe6e6; padding: 15px; border-radius: 5px; color: #cc0000;">
+                <h4>Error: {{ result.error }}</h4>
+                <p>{{ result.message }}</p>
+                
+                {% if result.help %}
+                    <p><strong>Help:</strong> {{ result.help }}</p>
+                {% endif %}
+                
+                {% if result.full_response %}
+                    <details>
+                        <summary>Show Full Error Details</summary>
+                        <pre>{{ result.full_response | tojson(indent=4) }}</pre>
+                    </details>
+                {% endif %}
+            </div>
+        {% elif result.value %}
+            <p><strong>Found {{ result.value | length }} email(s)</strong></p>
+            
+            {% for email in result.value %}
+                <div class="email-item">
+                    <div class="email-subject">{{ email.subject }}</div>
+                    <div class="email-from">
+                        From: {{ email.from.emailAddress.name }} ({{ email.from.emailAddress.address }})
+                    </div>
+                    <div class="email-date">{{ email.receivedDateTime }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <pre>{{ result | tojson(indent=4) }}</pre>
+        {% endif %}
+    {% endif %}
+
+</body>
+</html>
